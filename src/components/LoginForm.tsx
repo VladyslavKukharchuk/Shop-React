@@ -43,17 +43,6 @@ function LoginForm(props: any) {
 
     const emailHandler = (e: any) => {
         setEmail(e.target.value)
-        // const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-
-        // if (e.target.value) {
-        //     if (!re.test(String(email).toLowerCase())) {
-        //         setEmailError('Invalid email');
-        //     } else {
-        //         setEmailError("");
-        //     }
-        // } else {
-        //     setEmailError('Field email Cannot be empty');
-        // }
         if (e.target.value) {
             setEmailError("");
         } else {
@@ -65,15 +54,6 @@ function LoginForm(props: any) {
         setPassword(e.target.value)
 
         if (e.target.value) {
-            //     if (e.target.value.length < 6 || e.target.value.length > 15) {
-            //         setPasswordError('Password must be longer than 6 and shorter than 15 characters');
-
-            //     } else {
-            //         setPasswordError("");
-            //     }
-            // } else {
-            //     setPasswordError('Field password Cannot be empty');
-            // }
             if (e.target.value) {
                 setPasswordError("");
             } else {
@@ -104,7 +84,7 @@ function LoginForm(props: any) {
             })
             .catch((error) => {
                 if (error.code === "auth/wrong-password") {
-                    setPasswordError('Incorrect password');
+                    setPasswordError('Wrong password');
                 } else if (error.code === "auth/user-not-found") {
                     setEmailError('The user with this email does not exist');
                 } else {
