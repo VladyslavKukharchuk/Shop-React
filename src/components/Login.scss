@@ -4,6 +4,12 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+
+    .btn {
+      &:disabled {
+        background: #cccccc;
+      }
+    }
   
     .title {
       margin: 0 0 5px 0;
@@ -13,7 +19,7 @@
       margin: 0 0 20px 0;
     }
     .error {
-      display: none;
+      display: block;
       padding: 15px;
       margin-bottom: 20px;
       border: 1px solid $error--border;
@@ -22,10 +28,6 @@
       background-color: $error--bg;
       width: 100%;
       transition: 0.2s;
-  
-      &.active {
-        display: block;
-      }
     }
     label {
       margin-bottom: 10px;

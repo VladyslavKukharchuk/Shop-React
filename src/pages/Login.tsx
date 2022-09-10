@@ -1,6 +1,6 @@
 import React from 'react';
 import LoginForm from '../components/LoginForm';
-import '../components/LoginForm.scss';
+import '../components/Login.scss';
 import RegistrationForm from '../components/RegistrationForm';
 
 //переадресація при неавторизованому користувачі

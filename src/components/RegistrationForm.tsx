@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
+import { useEffect } from 'react';
 
 //імпорт для Firebase + Redux-Toolkit
 import { useAppDispatch } from '../hooks/redux-hooks';
@@ -14,8 +15,104 @@ import {useNavigate} from 'react-router-dom';
 function RegistrationForm(props: any) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [pass, setPass] = useState('');
-    const [passVerify, setPassVerify] = useState('');
+    const [password, setPassword] = useState('');
+    const [passwordVerify, setPasswordVerify] = useState('');
+    const [nameDirty, setNameDirty] = useState(false);
+    const [emailDirty, setEmailDirty] = useState(false);
+    const [passwordDirty, setPasswordDirty] = useState(false);
+    const [passwordVerifyDirty, setPasswordVerifyDirty] = useState(false);
+    const [nameError, setNameError] = useState('Field name Cannot be empty');
+    const [emailError, setEmailError] = useState('Field email Cannot be empty');
+    const [passwordError, setPasswordError] = useState('Field password Cannot be empty');
+    const [passwordVerifyError, setPasswordVerifyError] = useState('Passwords do not match');
+
+    
+    const [formValid, setFormValid] = useState(false);
+
+    useEffect(() => {
+        if(nameError || emailError || passwordError || passwordVerifyError){
+            setFormValid(false);
+        } else {
+            setFormValid(true);
+        }
+    }, [nameError, emailError, passwordError, passwordVerifyError])
+
+
+    const blurHandler = (e: any) => {
+        switch (e.target.name) {
+            case 'name':
+                setNameDirty(true);
+                break
+            case 'email':
+                setEmailDirty(true);
+                break
+            case 'password':
+                setPasswordDirty(true);
+                break
+            case 'passwordVerify':
+                setPasswordVerifyDirty(true);
+                break
+        }
+    }
+
+    const nameHandler = (e: any) => {
+        setName(e.target.value)
+        if (e.target.value) {
+            if (e.target.value.length < 2 || e.target.value.length > 30) {
+                setNameError('Password name be longer than 2 and shorter than 30 characters');
+
+            } else {
+                setNameError("");
+            }
+        } else {
+            setNameError('Field name Cannot be empty');
+        }
+    }
+
+    const emailHandler = (e: any) => {
+        setEmail(e.target.value)
+        const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
+        if (e.target.value) {
+            if (!re.test(String(email).toLowerCase())) {
+                setEmailError('Invalid email');
+            } else {
+                setEmailError("");
+            }
+        } else {
+            setEmailError('Field email Cannot be empty');
+        }
+    }
+
+    const passwordHandler = (e: any) => {
+        setPassword(e.target.value)
+
+        if (e.target.value) {
+            if (e.target.value.length < 6 || e.target.value.length > 15) {
+                setPasswordError('Password must be longer than 6 and shorter than 15 characters');
+
+            } else {
+                setPasswordError("");
+            }
+        } else {
+            setPasswordError('Field password Cannot be empty');
+        }
+        console.log(e.target.value.length)
+        console.log(password)
+    }
+
+    const passwordVerifyHandler = (e: any) => {
+
+        setPasswordVerify(e.target.value)
+
+        console.log(password === e.target.value)
+
+        if (password === e.target.value) {
+            setPasswordVerifyError("");
+        } else{
+            setPasswordVerifyError("Passwords do not match");
+        }
+    }
 
     //функція реєстрації в Firebase
     const dispatch = useAppDispatch();
@@ -38,6 +135,11 @@ function RegistrationForm(props: any) {
                 navigate('/');
             })
             .catch((error) => {
+                if (error.code === "auth/email-already-in-use") {
+                    setEmailError('A user with this email already exists');
+                } else {
+                    setEmailError(error.code);
+                }
                 console.log(error);
                 console.log(error.code);
                 console.log(error.message);
@@ -47,55 +149,58 @@ function RegistrationForm(props: any) {
 
 
     return (
-        <form id="RegistrationForm" className="userForm" onSubmit={(event) => handleRegister(event, email, pass)}>
+        <form id="RegistrationForm" className="userForm" onSubmit={(event) => handleRegister(event, email, password)}>
             <p className="title">Quick Registration</p>
             <p className="desription">For new customers</p>
-            <div className="error">Invalid email address or password.</div>
+            {(nameDirty && nameError) && <div className="error">{nameError}</div>}
             <label>
                 <input
                     type="text"
                     placeholder="Full name"
-                    data-name="name"
-                    // defaultValue="Ivan"
+                    name="name"
                     required
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => nameHandler(e)}
+                    onBlur={(e) => blurHandler(e)}
                 />
             </label>
+            {(emailDirty && emailError) && <div className="error">{emailError}</div>}
             <label>
                 <input
                     type="email"
                     placeholder="Email Address"
-                    data-name="email"
-                    // defaultValue="ivan@gmail.com"
+                    name="email"
                     required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => emailHandler(e)}
+                    onBlur={(e) => blurHandler(e)}
                 />
             </label>
+            {(passwordDirty && passwordError) && <div className="error">{passwordError}</div>}
             <label>
                 <input
                     type="password"
                     placeholder="Password"
-                    data-name="password"
-                    // defaultValue={123}
+                    name="password"
                     required
-                    value={pass}
-                    onChange={(e) => setPass(e.target.value)}
+                    value={password}
+                    onChange={(e) => passwordHandler(e)}
+                    onBlur={(e) => blurHandler(e)}
                 />
             </label>
+            {(passwordVerifyDirty && passwordVerifyError) && <div className="error">{passwordVerifyError}</div>}
             <label>
                 <input
                     type="password"
                     placeholder="Verify Password"
-                    data-name="passwordVerify"
-                    // defaultValue={123}
+                    name="passwordVerify"
                     required
-                    value={passVerify}
-                    onChange={(e) => setPassVerify(e.target.value)}
+                    value={passwordVerify}
+                    onChange={(e) => passwordVerifyHandler(e)}
+                    onBlur={(e) => blurHandler(e)}
                 />
             </label>
-            <button className="btn">Create Account</button>
+            <button disabled={!formValid} className="btn">Create Account</button>
         </form>
     );
 }
