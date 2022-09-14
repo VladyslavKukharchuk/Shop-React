@@ -83,12 +83,15 @@ function LoginForm(props: any) {
                 navigate('/');
             })
             .catch((error) => {
-                if (error.code === "auth/wrong-password") {
-                    setPasswordError('Wrong password');
-                } else if (error.code === "auth/user-not-found") {
-                    setEmailError('The user with this email does not exist');
-                } else {
-                    setEmailError(error.code);
+                switch (error.code) {
+                    case "auth/user-not-found":
+                        setEmailError('The user with this email does not exist');
+                        break;
+                    case "auth/wrong-password":
+                        setPasswordError('Wrong password');      
+                        break;
+                    default:
+                        setEmailError(error.code);
                 }
                 // console.log(error);
                 // console.log(error.code);

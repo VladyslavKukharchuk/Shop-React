@@ -97,15 +97,11 @@ function RegistrationForm(props: any) {
         } else {
             setPasswordError('Field password Cannot be empty');
         }
-        console.log(e.target.value.length)
-        console.log(password)
     }
 
     const passwordVerifyHandler = (e: any) => {
 
         setPasswordVerify(e.target.value)
-
-        console.log(password === e.target.value)
 
         if (password === e.target.value) {
             setPasswordVerifyError("");
@@ -126,7 +122,7 @@ function RegistrationForm(props: any) {
         const auth = getAuth();
         createUserWithEmailAndPassword(auth, email, password)
             .then(({ user }) => {
-                console.log(user);
+                // console.log(user);
                 dispatch(setUser({
                     email: user.email,
                     id: user.uid,
@@ -135,14 +131,16 @@ function RegistrationForm(props: any) {
                 navigate('/');
             })
             .catch((error) => {
-                if (error.code === "auth/email-already-in-use") {
-                    setEmailError('A user with this email already exists');
-                } else {
-                    setEmailError(error.code);
+                switch (error.code) {
+                    case "auth/email-already-in-use":
+                        setEmailError('A user with this email already exists');
+                        break;
+                    default:
+                        setEmailError(error.code);
                 }
-                console.log(error);
-                console.log(error.code);
-                console.log(error.message);
+                // console.log(error);
+                // console.log(error.code);
+                // console.log(error.message);
             });
     }
     //функція реєстрації в Firebase
